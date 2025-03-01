@@ -6,7 +6,8 @@ import json
 import time
 import sys
 import traceback
-from threading import Thread, Event
+from threading import Thread, Event, Lock
+import random
 
 import config
 from line_messenger import send_message
@@ -17,6 +18,7 @@ config.parse_args()
 
 # Setup logger
 log = setup_logger("mqtt_client")
+log_worker = setup_logger("mqtt_send_thread_worker", console_output=False, file_output=False)  # For debug use
 
 class MQTTHandler:
     """
@@ -39,6 +41,7 @@ class MQTTHandler:
         self.connected = Event()
         self.should_stop = Event()
         self.reconnect_count = 0
+        self.lock = Lock()
     
     def _on_connect(self, client, userdata, flags, rc, *args, **kwargs):
         """
@@ -108,9 +111,10 @@ class MQTTHandler:
         """
         Process an MQTT message.
         """
+        identifier = str(int(random.random() * 1000))
         try:
             msg_text = msg.payload.decode()
-            log.debug(f"Received message on {msg.topic}: {msg_text[:100]}...")
+            log.debug(f"ID {identifier} | Received message on {msg.topic}: {msg_text[:100]}...")
             
             msg_json = json.loads(msg_text)
             if "message" not in msg_json:
@@ -125,28 +129,36 @@ class MQTTHandler:
                 data_json = msg_text.split(" ")[-1][1:-1]
                 data = json.loads(data_json)
                 data.update({'topic': topic})
-                
-                log.info(f"Parsed message: topic={topic}, data={data}")
+
+                identifier += f" - {topic}"
+                log.info(f"ID {identifier} | Parsed message: topic={topic}, data={data}")
                 
                 # Compose and send message
                 message = self._compose_message(data)
-                result = send_message(message)
+
+                # Only one message can be dealt with at a time
+
+                log_worker.info(f"===> ID {identifier} waiting")
+                with self.lock:
+                    log_worker.info(f"===> ID {identifier} sending")
+                    result = send_message(message)
+                    log_worker.info(f"===> ID {identifier} done")
                 
                 if result:
-                    log.info("Message sent successfully to LINE")
+                    log.info(f"ID {identifier} | Message sent successfully to LINE")
                 else:
-                    log.error("Failed to send message to LINE")
+                    log.error(f"ID {identifier} | Failed to send message to LINE")
                 
             except IndexError:
-                log.error(f"Failed to parse message format: {msg_text}")
+                log.error(f"ID {identifier} | Failed to parse message format: {msg_text}")
             except json.JSONDecodeError:
-                log.error(f"Failed to parse JSON data from message: {msg_text}")
+                log.error(f"ID {identifier} | Failed to parse JSON data from message: {msg_text}")
                 
         except json.JSONDecodeError:
-            log.warning(f"Message is not valid JSON: {msg.payload.decode()[:100]}")
+            log.warning(f"ID {identifier} | Message is not valid JSON: {msg.payload.decode()[:100]}")
         except Exception as e:
-            log.error(f"Error processing message: {e}")
-            log.error(traceback.format_exc())
+            log.error(f"ID {identifier} | Error processing message: {e}")
+            log.error(f"ID {identifier} | {traceback.format_exc()}")
     
     def _compose_message(self, data):
         """

@@ -10,7 +10,7 @@ from datetime import datetime
 log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
 os.makedirs(log_dir, exist_ok=True)
 
-def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=True):
+def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=False):
     """
     Configure and return a logger with the specified name.
     
