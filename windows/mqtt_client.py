@@ -40,9 +40,11 @@ class MQTTHandler:
         self.should_stop = Event()
         self.reconnect_count = 0
     
-    def _on_connect(self, client, userdata, flags, rc, properties=None):
+    def _on_connect(self, client, userdata, flags, rc, *args, **kwargs):
         """
         Callback for when the client connects to the broker.
+        
+        Note: The signature includes *args, **kwargs to handle different paho-mqtt versions.
         """
         if rc == 0:
             log.info(f"Connected to MQTT broker at {self.broker}:{self.port}")
@@ -54,9 +56,11 @@ class MQTTHandler:
             log.error(f"Failed to connect to MQTT broker, code: {rc}")
             self.connected.clear()
     
-    def _on_disconnect(self, client, userdata, rc, properties=None):
+    def _on_disconnect(self, client, userdata, rc, *args, **kwargs):
         """
         Callback for when the client disconnects from the broker.
+        
+        Note: The signature includes *args, **kwargs to handle different paho-mqtt versions.
         """
         log.warning(f"Disconnected from MQTT broker with code: {rc}")
         self.connected.clear()
