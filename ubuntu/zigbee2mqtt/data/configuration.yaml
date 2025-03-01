@@ -1,0 +1,44 @@
+version: 4
+homeassistant:
+  enabled: false
+frontend:
+  enabled: true
+mqtt:
+  base_topic: zigbee2mqtt
+  #server: mqtt://localhost
+  #server: 'mqtt://0.0.0.0:1883'
+  server: 'mqtt://mosquitto:1883'
+serial:
+  adapter: ezsp
+  port: /dev/ttyACM0
+advanced:
+  network_key:
+    - 26
+    - 236
+    - 145
+    - 94
+    - 44
+    - 38
+    - 131
+    - 150
+    - 218
+    - 78
+    - 40
+    - 188
+    - 99
+    - 182
+    - 119
+    - 244
+  pan_id: 34616
+  ext_pan_id:
+    - 126
+    - 19
+    - 101
+    - 141
+    - 201
+    - 185
+    - 183
+    - 203
+devices:
+  '0x00124b002911fbdc':
+    friendly_name: btn1
