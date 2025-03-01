@@ -1,0 +1,17 @@
+[Unit]
+Description=Launch Mosquitto Server and Zigbee2MQTT from Docker Compose Service
+After=network.target snap.docker.dockerd.service
+Requires=snap.docker.dockerd.service
+
+[Service]
+WorkingDirectory=/home/user/hch-emergency-button/ubuntu
+ExecStart=/snap/bin/docker-compose up
+ExecStop=/snap/bin/docker-compose down
+Restart=always
+User=user
+Group=user
+Environment=DOCKER_COMPOSE_OVERRIDE_FILE=/home/user/hch-emergency-button/ubuntu/docker-compose.yaml
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
