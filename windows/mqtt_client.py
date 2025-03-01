@@ -233,4 +233,29 @@ class MQTTHandler:
             log.info("Waiting for MQTT messages. Press Ctrl+C to exit.")
             while not self.should_stop.is_set():
                 time.sleep(1)
-        except KeyboardInterrupt
+        except KeyboardInterrupt:
+            log.info("Received interrupt signal, shutting down...")
+            self.disconnect()
+
+
+def main():
+    """
+    Main entry point of the application.
+    """
+    log.info("Starting MQTT to LINE messaging bridge")
+    
+    # Create and connect MQTT handler
+    handler = MQTTHandler()
+    
+    if handler.connect():
+        # Wait for messages
+        handler.wait_for_messages()
+    else:
+        log.error("Failed to start MQTT client. Exiting.")
+        sys.exit(1)
+    
+    log.info("Program terminated")
+
+
+if __name__ == "__main__":
+    main()
