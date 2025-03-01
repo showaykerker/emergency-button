@@ -34,6 +34,9 @@ GROUP_TAB = os.path.join(IMAGE_DIR, "group-tab.png")
 GROUP_TAB_ACTIVATED = os.path.join(IMAGE_DIR, "group-tab-activated.png")
 TARGET_GROUP_NAME = os.path.join(IMAGE_DIR, "target-group-name.png")
 INPUT_BOX = os.path.join(IMAGE_DIR, "input-box.png")
+CALL_ICON = os.path.join(IMAGE_DIR, "call-icon.png")
+CALL_SELECTION = os.path.join(IMAGE_DIR, "call-selection.png")
+START_CALL = os.path.join(IMAGE_DIR, "start-call.png")
 
 def parse_args():
     """Parse command line arguments and update configuration."""

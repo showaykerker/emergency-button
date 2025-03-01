@@ -141,7 +141,7 @@ class MQTTHandler:
                 log_worker.info(f"===> ID {identifier} waiting")
                 with self.lock:
                     log_worker.info(f"===> ID {identifier} sending")
-                    result = send_message(message)
+                    result = send_message(message, call_instead=data.get("action") == "long")
                     log_worker.info(f"===> ID {identifier} done")
                 
                 if result:

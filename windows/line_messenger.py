@@ -296,13 +296,14 @@ class LineMessenger:
             logger.error(f"Error navigating to target group: {e}", exc_info=True)
             return False
 
-    def send_message(self, message, max_retries=2):
+    def send_message(self, message="", max_retries=2, call_instead=False):
         """
         Send a message to the target chat group in LINE.
 
         Args:
             message (str): Message text to send
             max_retries (int): Maximum number of retry attempts
+            call_instead (bool): Call the group instead of messaging
 
         Returns:
             bool: True if message sent successfully, False otherwise
@@ -322,9 +323,23 @@ class LineMessenger:
                     logger.warning(f"Retrying navigation (attempt {attempt+1}/{max_retries+1})")
                     continue
 
-                # Input and send message
-                self.input_text(message, True)
-                logger.info("Message sent successfully")
+                if not call_instead:
+                    # Input and send message
+                    self.input_text(message, True)
+                    logger.info("Message sent successfully")
+                    return True
+
+                # Call INSTEAD
+                logger.info("CALL INSTEAD")
+                if not self.wait_for_image(config.CALL_ICON, click=True):
+                    logger.error("Could not find call icon.")
+                    return False
+                if not self.wait_for_image(config.CALL_SELECTION, click=True):
+                    logger.error("Could not find call selection.")
+                    return False
+                if not self.wait_for_image(config.START_CALL, click=True):
+                    logger.error("Could not find start call.")
+                    return False
                 return True
 
             except Exception as e:
@@ -344,19 +359,21 @@ class LineMessenger:
 # Singleton instance for use throughout the application
 messenger = LineMessenger()
 
-def send_message(msg):
+def send_message(msg="", call_instead=False):
     """
     Public function to send a message using the LineMessenger.
 
     Args:
         msg (str): Message to send
+        call_instead (bool): Call the group instead of messaging
 
     Returns:
         bool: True if successful, False otherwise
     """
-    return messenger.send_message(msg)
+    return messenger.send_message(message=msg, call_instead=call_instead)
 
 
 if __name__ == '__main__':
     # Test the messenger
-    send_message("Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()))
+    send_message("Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()), call_instead=False)
+    # send_message("Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()), call_instead=True)
