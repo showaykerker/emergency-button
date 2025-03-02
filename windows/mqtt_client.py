@@ -14,9 +14,6 @@ import config
 from line_messenger import send_message
 from logger import setup_logger
 
-# Load configuration
-config.parse_args()
-
 # Setup logger
 log = setup_logger("mqtt_client")
 log_worker = setup_logger("mqtt_send_thread_worker", console_output=False, file_output=False)  # For debug use
