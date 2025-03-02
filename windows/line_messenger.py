@@ -319,7 +319,7 @@ class LineMessenger:
                 # If the Cancel call icon exists and get another call_instead
                 # We will cancel the call
                 if call_instead:
-                    if self.wait_for_image(config.CANCEL_CALL, click=True):
+                    if self.locate_on_screen(config.CANCEL_CALL, click=True):
                         logger.info("Cancel Call")
                         return True
 

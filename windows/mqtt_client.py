@@ -183,9 +183,11 @@ class MQTTHandler:
         linkquality = int(data.get('linkquality') or -1)
 
         if action is None:
+            log.info(f"Get msg without action, possibly a bg ping: {data}")
             return "bg_ping", None
 
         if config.BUTTON_ACTION_BEHAVIOR.get(action) == "call":
+            log.info(f"Get call action")
             return "call", None
 
         msg = f"===== 按鈕觸發：{data.get('topic')} =====\n\n"
