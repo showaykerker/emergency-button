@@ -48,9 +48,9 @@ echo.
 :: Change to the batch file's directory
 cd /d %~dp0
 
-:: Start MQTT client
-echo 開啟 MQTT Client 主程式
-python mqtt_client.py
+:: Start main.py
+echo 開啟主程式
+python main.py
 
 :: If the program exits unexpectedly, keep the window open
 if %errorlevel% neq 0 (
