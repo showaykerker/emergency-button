@@ -5,7 +5,8 @@ import os
 import argparse
 
 # MQTT Settings
-MQTT_BROKER = "192.168.232.128"
+# MQTT_BROKER = "192.168.232.128"
+MQTT_BROKER = "192.168.108.128"
 MQTT_PORT = 1883
 MQTT_TOPIC = "zigbee2mqtt/#"
 MQTT_QOS = 0
@@ -61,8 +62,8 @@ def parse_args():
     parser.add_argument('--broker', type=str, help='MQTT broker address')
     parser.add_argument('--port', type=int, help='MQTT broker port')
     parser.add_argument('--topic', type=str, help='MQTT topic to subscribe')
-    parser.add_argument('--battery-threshold', type=int, help='Battery alarm threshold (%)')
-    parser.add_argument('--voltage-threshold', type=int, help='Voltage alarm threshold (mV)')
+    parser.add_argument('--battery-threshold', type=int, help='Battery alarm threshold in percentage')
+    parser.add_argument('--voltage-threshold', type=int, help='Voltage alarm threshold in milliVolt')
     parser.add_argument('--link-threshold', type=int, help='Link quality alarm threshold')
     
     args = parser.parse_args()
