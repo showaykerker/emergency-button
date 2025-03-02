@@ -7,7 +7,8 @@ import time
 import sys
 import traceback
 from threading import Thread, Event, Lock
-import random
+
+import nanoid  # To generate Identifier
 
 import config
 from line_messenger import send_message
@@ -111,10 +112,11 @@ class MQTTHandler:
         """
         Process an MQTT message.
         """
-        identifier = str(int(random.random() * 1000))
+        identifier = nanoid.generate(size=8)
+
         try:
             msg_text = msg.payload.decode()
-            log.debug(f"ID {identifier} | Received message on {msg.topic}: {msg_text[:100]}...")
+            log.info(f"ID {identifier} | Received message on {msg.topic}: {msg_text[:200]}...")
 
             msg_json = json.loads(msg_text)
             if "message" not in msg_json:
@@ -140,7 +142,6 @@ class MQTTHandler:
                     return
 
                 # Only one message can be dealt with at a time
-
                 log_worker.info(f"===> ID {identifier} waiting")
                 with self.lock:
                     log_worker.info(f"===> ID {identifier} sending")
