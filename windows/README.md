@@ -73,7 +73,7 @@ hch-emergency-button/
 │   ├── ...
 │   ├── ...
 │   └── target-group-name.png
-├── start_mqtt_client.bat
+├── start.bat
 ├── requirements.txt
 └── README.md                  # 說明文件
 ```
