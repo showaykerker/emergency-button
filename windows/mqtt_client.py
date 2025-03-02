@@ -135,6 +135,9 @@ class MQTTHandler:
                 
                 # Compose and send message
                 message = self._compose_message(data)
+                if message is None:
+                    log.info(f"ID {identifier} | Background check, still alive.")
+                    return
 
                 # Only one message can be dealt with at a time
 
@@ -168,7 +171,9 @@ class MQTTHandler:
             data (dict): Message data
             
         Returns:
-            str: Formatted message for LINE
+            Optional[str]: Formatted message for LINE, 
+                if None, it means that is not an trigger event,
+                it simply a background pinging automatically send.
         """
         msg = f"===== 按鈕觸發：{data.get('topic')} =====\n\n"
         
@@ -184,10 +189,10 @@ class MQTTHandler:
         if linkquality >= 0 and linkquality < config.LINK_ALARM_THRESHOLD:
             msg += f'- 連線品質不佳： {linkquality}。\n'
         
-        action = data.get('action') or 'error'
+        action = data.get('action') or 'auto background check'
         
-        if action == "error":
-            msg += f"\n\nerror.\ndata = {data}"
+        if action == "auto background check":
+            return None
         
         if action == "double":
             msg += f"- 電池電力： {battery}\n"
