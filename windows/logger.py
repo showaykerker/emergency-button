@@ -14,14 +14,6 @@ import config
 log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
 os.makedirs(log_dir, exist_ok=True)
 
-class SafeTimedRotatingFileHandler(TimedRotatingFileHandler):
-    """
-    A custom TimedRotatingFileHandler that ensures proper file cleanup
-    while still allowing for custom formatters.
-    """
-    def __init__(self, filename, **kwargs):
-        super().__init__(filename, **kwargs)
-
 def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=True):
     """
     Configure and return a logger with the specified name.
