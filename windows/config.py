@@ -12,6 +12,16 @@ MQTT_QOS = 0
 MQTT_RECONNECT_DELAY = 5  # seconds
 MQTT_MAX_RECONNECT_ATTEMPTS = 10
 
+# Button Behavior
+BUTTON_ACTION_BEHAVIOR = {
+    "single": "send",
+    "double": "call",
+    "long"  : "debug"
+}
+SINGLE_CLICK_ACTION = "send"
+DOUBLE_CLICK_ACTION = "call"
+LONG_CLICK_ACTION = "debug"
+
 # Button Alert Thresholds
 BATTERY_ALARM_THRESHOLD = 30    # %
 VOLTAGE_ALARM_THRESHOLD = 2400  # mV
@@ -37,6 +47,7 @@ INPUT_BOX = os.path.join(IMAGE_DIR, "input-box.png")
 CALL_ICON = os.path.join(IMAGE_DIR, "call-icon.png")
 CALL_SELECTION = os.path.join(IMAGE_DIR, "call-selection.png")
 START_CALL = os.path.join(IMAGE_DIR, "start-call.png")
+CANCEL_CALL = os.path.join(IMAGE_DIR, "cancel-call.png")
 
 def parse_args():
     """Parse command line arguments and update configuration."""

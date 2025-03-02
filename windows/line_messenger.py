@@ -308,10 +308,21 @@ class LineMessenger:
         Returns:
             bool: True if message sent successfully, False otherwise
         """
-        logger.info(f"Sending message (length: {len(message)})")
+        if message is None:
+            logger.info(f"send_message Get empty message.")
+        else:
+            logger.info(f"send_message length: {len(message)}")
 
         for attempt in range(max_retries + 1):
             try:
+
+                # If the Cancel call icon exists and get another call_instead
+                # We will cancel the call
+                if call_instead:
+                    if self.wait_for_image(config.CANCEL_CALL, click=True):
+                        logger.info("Cancel Call")
+                        return True
+
                 # Ensure LINE is open
                 self.ensure_line_app_opened()
 
