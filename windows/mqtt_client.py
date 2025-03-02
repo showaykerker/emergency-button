@@ -116,20 +116,26 @@ class MQTTHandler:
 
         try:
             msg_text = msg.payload.decode()
+            topic = msg.topic
             log.info(f"ID {identifier} | Received message on {msg.topic}: {msg_text[:200]}...")
 
-            msg_json = json.loads(msg_text)
-            if "message" not in msg_json:
+            data = json.loads(msg_text)
+
+            if "logging" in topic:
+                log.info(f"ID {identifier} | ignore msg from `logging`")
                 return
 
-            msg_text = msg_json["message"]
+            if type(data) is not dict:
+                log.info(f"ID {identifier} | ignore data type {type(data)}")
+                return
+
+            if "action" not in data:
+                log.info(f"ID {identifier} | ignore msg without 'action' key")
+                return
 
             # Extract data from message
             # z2m:mqtt: MQTT publish: topic 'zigbee2mqtt/btn1', payload '{"action":"single","battery":100,"linkquality":160,"voltage":3000}'
             try:
-                topic = msg_text.split("zigbee2mqtt")[1].split(",")[0][1:-1]
-                data_json = msg_text.split(" ")[-1][1:-1]
-                data = json.loads(data_json)
                 data.update({'topic': topic})
 
                 identifier += f" - {topic}"
