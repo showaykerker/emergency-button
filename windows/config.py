@@ -34,6 +34,7 @@ IMAGE_SEARCH_CONFIDENCE = 0.95  # 0.0-1.0
 IMAGE_RETRY_COUNT = 10
 IMAGE_RETRY_INTERVAL = 0.25     # seconds
 IMAGE_SEARCH_TIMEOUT = 60       # seconds
+IMAGE_CACHE_LIFETIME = 3        # seconds, won't search again if cached
 
 # Image paths
 IMAGE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")

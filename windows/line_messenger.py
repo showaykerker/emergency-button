@@ -24,7 +24,7 @@ class LineMessenger:
     def __init__(self):
         # Cache for UI element locations
         self.ui_cache = {}
-        self.cache_lifetime = 60  # seconds
+        self.cache_lifetime = config.IMAGE_CACHE_LIFETIME  # seconds
         self.cache_timestamps = {}
 
     def locate_on_screen(self, target, confidence=None, click=False,
@@ -208,8 +208,8 @@ class LineMessenger:
             group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab", confidence=0.9993)
             group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated", confidence=0.9993)
             if icon1 is not None or group_tab is not None or group_tab_activated is not None:
-                logger.info("LINE app is already open\n"\
-                    f"\tgroup_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
+                logger.info("LINE app is already open. "\
+                    f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
                 return True
 
             # Try to find and click LINE icon on desktop/taskbar
@@ -227,8 +227,8 @@ class LineMessenger:
                 group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab")
                 group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated")
                 if icon1 is not None or group_tab is not None or group_tab_activated is not None:
-                    logger.info(f"LINE app opened successfully after attempt {attempt+1}\n"\
-                        f"\tgroup_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
+                    logger.info(f"LINE app opened successfully after attempt {attempt+1}. "\
+                        f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
                     return True
 
         logger.error("Failed to open LINE app after multiple attempts")
@@ -246,6 +246,8 @@ class LineMessenger:
         try:
             group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab", confidence=0.9993)
             group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated", confidence=0.9993)
+            if bool(group_tab) == bool(group_tab_activated):
+                logger.warning("Group Tab activate status not clear here.")
 
             if group_tab is None and group_tab_activated is None:
                 logger.info("group tabs not found, click on left bar first!")
@@ -265,8 +267,8 @@ class LineMessenger:
                 pyautogui.click(x, y)
                 time.sleep(config.SLEEP_AFTER_CLICK)
             else:
-                logger.info(f"Already found group tabs, skip. \n"\
-                    f"\tgroup_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
+                logger.info(f"Already found group tabs, skip. "\
+                    f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
 
             if group_tab_activated is None:
                 # Click group tab and select target group
