@@ -34,12 +34,17 @@ pip install -r requirements.txt
 3. 視需要設置 LINE 聊天群組截圖：
 
 - 在 `images` 目錄中放置必要的截圖：
+  - `call-icon.png`
+  - `call-selection.png`
+  - `start-call.png`
+  - `cancel-call.png`
+  - `group-tab-activated.png` - 群組標籤已被選中的圖示
+  - `group-tab.png` - 群組標籤
+  - `input-box.png` - 訊息輸入框
   - `line-icon.png` - LINE 應用程式圖示
   - `line-left-bar-icon-1.png` - LINE 左側導航列的第一個圖示
   - `line-left-bar-icon-3.png` - LINE 左側導航列的第三個圖示
-  - `group-tab.png` - 群組標籤
   - `target-group-name.png` - **目標群組名稱** (應該只需要設定這個)
-  - `input-box.png` - 訊息輸入框
 
 ## 使用方法
 
@@ -73,12 +78,10 @@ hch-emergency-button/
 ├── line_messenger.py      # LINE消息發送模塊
 ├── logger.py
 ├── images/                # 圖像文件夾
-│   ├── line-icon.png
-│   ├── line-left-bar-icon-1.png
-│   ├── line-left-bar-icon-3.png
-│   ├── group-tab.png
-│   ├── target-group-name.png
-│   └── input-box.png
+│   ├── call-icon.png
+│   ├── ...
+│   ├── ...
+│   └── target-group-name.png
 └── README.md              # 說明文件
 ```
 
