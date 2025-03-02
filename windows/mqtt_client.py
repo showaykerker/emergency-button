@@ -185,10 +185,6 @@ class MQTTHandler:
         if action is None:
             return "bg_ping", None
 
-        log.info(action)
-        log.info(config.BUTTON_ACTION_BEHAVIOR.get(action))
-        log.info(config.BUTTON_ACTION_BEHAVIOR.get(action) == "call")
-
         if config.BUTTON_ACTION_BEHAVIOR.get(action) == "call":
             return "call", None
 
