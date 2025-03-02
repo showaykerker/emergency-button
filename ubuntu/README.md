@@ -1,33 +1,35 @@
-# Deploy Mosquitto Server and Zigbee2Mqtt on Ubuntu
+# 在 Ubuntu 上部署 Mosquitto Server 和 Zigbee2Mqtt
 
-## Prerequisition
+**機翻自[README-en.md](README-en.md)**
+
+## 前置需求
 - docker 
 - docker compose
 
-These 2 can be installed by `sudo snap install docker`. If you install it otherwise, make sure to modify `ExecStart` and `ExecStop` in [systemd service file](mosquitto-zigbee2mqtt-docker-compose.service).
+這兩個可透過 `sudo snap install docker` 安裝。若您以其他方式安裝，請確認修改 [systemd 服務檔案](mosquitto-zigbee2mqtt-docker-compose.service) 中的 `ExecStart` 和 `ExecStop`。
 
-## Installation
-1. Make sure content in [zigbee2mqtt configuration](zigbee2mqtt/data/configuration.yaml) is correct, especially serial part.
-2. Check [`docker-compose.yaml`](docker-compose.yaml), modify the device part. The coordinator device in the container should be the same as `serial` > `port` in [zigbee2mqtt configuration](zigbee2mqtt/data/configuration.yaml).
-3. Try to launch with `docker compose up`.
-4. If everything is alright, check [systemd service file](mosquitto-zigbee2mqtt-docker-compose.service) and configure it. Make sure paths, user, group in `[Service]` configurations are all correct. The user here should have the permission to run docker commands.
-5. Copy the service file to `/etc/systemd/system`, or symbolically link it.
-6. Reload systemd and enable the service: `sudo systemctl daemon-reload && sudo systemctl enable mosquitto-zigbee2mqtt-docker-compose.service`
-7. Start the service: `sudo systemctl start mosquitto-zigbee2mqtt-docker-compose.service`
+## 安裝步驟
+1. 確保 [zigbee2mqtt 設定](zigbee2mqtt/data/configuration.yaml) 內容正確，尤其是序列埠部分。
+2. 檢查 [`docker-compose.yaml`](docker-compose.yaml)，修改裝置部分。容器中的協調器 (coordinator) 裝置應與 [zigbee2mqtt 配置](zigbee2mqtt/data/configuration.yaml) 中的 `serial` > `port` 相同。
+3. 試著用 `docker compose up` 啟動。
+4. 若一切正常，檢查 [systemd 服務檔案](mosquitto-zigbee2mqtt-docker-compose.service) 並進行設定。確保 `[Service]` 配置中的路徑、使用者、群組都正確。此處的使用者應具有執行 docker 指令的權限。
+5. 複製服務檔案到 `/etc/systemd/system`，或建立符號連結(Symbolic Link)。
+6. 重新載入 systemd 並啟用服務：`sudo systemctl daemon-reload && sudo systemctl enable mosquitto-zigbee2mqtt-docker-compose.service`
+7. 啟動服務：`sudo systemctl start mosquitto-zigbee2mqtt-docker-compose.service`
 
-## Check Status
+## 檢查狀態
 - `sudo systemctl status mosquitto-zigbee2mqtt-docker-compose.service`
-- Reboot and see if it can start automatically.
+- 重新啟動系統並確認服務能否自動啟動。
 
-## Pair Wireless Button
-1. Open a browser, go to `http://localhost:8080/` and click on `Permit join (All)` at top. The coordinator will enter pairing mode.
-2. Have your wireless button go into pairing mode, it will then be shown on the web page.
-	- Typically, it requires to press `rst` for a few seconds. Check the button's manual for details.
+## 配對無線按鈕
+1. 開啟瀏覽器，前往 `http://localhost:8080/`，點擊頂部的 `Permit join (All)`。協調器將進入配對模式。
+2. 讓您的無線按鈕進入配對模式，它將顯示在網頁上。
+   - 通常需要按下 `rst` 按鈕幾秒鐘。請查閱按鈕的使用手冊了解詳細資訊。
 
-## Make Sure Everything Works on Ubuntu Side
-Check system journal by `sudo journalctl --all -f`, this should show a few logs on the screen.
+## 確認 Ubuntu 端一切正常運作
+透過 `sudo journalctl --all -f` 檢查系統日誌，螢幕上應該會顯示一些記錄。
 
-If you click on the button, a log should be shown.
+如果您按下按鈕，應該會顯示如下記錄：
 
 ```
 Mar 01 18:39:46 user-VMware-Virtual-Platform docker-compose[11426]: zigbee2mqtt  | [2025-03-01 18:39:46] info: 	z2m:mqtt: MQTT publish: topic 'zigbee2mqtt/btn1', payload '{"action":"single","battery":100,"linkquality":212,"voltage":3000}'
