@@ -50,6 +50,11 @@ CALL_SELECTION = os.path.join(IMAGE_DIR, "call-selection.png")
 START_CALL = os.path.join(IMAGE_DIR, "start-call.png")
 CANCEL_CALL = os.path.join(IMAGE_DIR, "cancel-call.png")
 
+# Log Config
+LOG_ROTATE_WHEN = "W0"          # When to trigger check, 'H', "M", "S", "D", "W0-W6", "midnight"
+LOG_ROTATE_INTERVAL = 1         # How many 'when' in one file
+LOG_ROTATE_BACKUPCOUNT = 4      # Preserve how many files
+
 def parse_args():
     """Parse command line arguments and update configuration."""
     parser = argparse.ArgumentParser(description='MQTT to LINE Messaging Bridge')

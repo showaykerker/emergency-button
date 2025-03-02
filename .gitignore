@@ -2,6 +2,8 @@
 ubuntu/zigbee2mqtt/data/*
 !ubuntu/zigbee2mqtt/data/configuration.yaml
 
+*.log.*
+
 
 
 # Byte-compiled / optimized / DLL files
