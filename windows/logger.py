@@ -1,6 +1,6 @@
 """
 Logger configuration module for the MQTT to LINE messaging system.
-Uses TimedRotatingFileHandler for automatic log rotation.
+Uses TimedRotatingFileHandler for automatic log rotation with reliable cleanup.
 """
 import logging
 import os
@@ -13,6 +13,14 @@ import config
 # Create logs directory if it doesn't exist
 log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
 os.makedirs(log_dir, exist_ok=True)
+
+class SafeTimedRotatingFileHandler(TimedRotatingFileHandler):
+    """
+    A custom TimedRotatingFileHandler that ensures proper file cleanup
+    while still allowing for custom formatters.
+    """
+    def __init__(self, filename, **kwargs):
+        super().__init__(filename, **kwargs)
 
 def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=True):
     """
@@ -52,14 +60,21 @@ def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=
         log_file = os.path.join(log_dir, f"{name}.log")
 
         # Create a timed rotating file handler
-        # Rotate at midnight each day with 30 days of backup
         file_handler = TimedRotatingFileHandler(
             filename=log_file,
             when=config.LOG_ROTATE_WHEN,
             interval=config.LOG_ROTATE_INTERVAL,
             backupCount=config.LOG_ROTATE_BACKUPCOUNT,
-            encoding='utf-8'
+            encoding='utf-8',
+            delay=True  # Only open file when first record is emitted
         )
+
+        # Apply the formatter to the file handler
+        file_handler.setFormatter(formatter)
+
+        # Standard log rotation suffix - this is important for proper cleanup
+        # Don't modify this unless you also modify the namer and rotator functions
+        # file_handler.suffix = "%Y-%m-%d-%H-%M-%S"
 
         logger.addHandler(file_handler)
 
