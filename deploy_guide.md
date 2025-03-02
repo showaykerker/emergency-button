@@ -1,6 +1,4 @@
-# 無線按鈕轉LINE通知系統
-
-本專案實作了一個將Zigbee無線按鈕的動作轉換為LINE群組的通知或通話的系統。
+# 部署與技術細節
 
 ## 系統架構
 
@@ -21,23 +19,6 @@
 - 選用 Ubuntu 是因為 Zigbee USB Dongle 在 Windows 上的驅動支援不佳，因此以虛擬機的方式處理，並使用 systemd 與 docker compose 自動開啟 Zigbee2MQTT 及 Mosquitto Server。
 - 選用 Windows 作為 Host 則是因為 Line APP 原生支援 Windows ，擁有較高的穩定性。
 
-## 功能特色
-
-- **多種觸發模式** (可由[config](windows/config.py)改變行為)
-  - 單擊：發送普通通知訊息
-  - 雙擊：撥打LINE群組電話
-  - 長按：發送包含詳細診斷資訊的測試訊息
-
-- **設備健康監控**
-  - 電池電量監測與低電量警告
-  - 訊號品質監測
-  - 電池電壓監測
-
-- **系統可靠性設計**
-  - 消息隊列確保並發處理
-  - 自動重連機制
-  - 完整的錯誤處理
-  - 詳細日誌記錄
 
 ## 快速開始
 
@@ -94,30 +75,6 @@ hch-emergency-button/
 └── README.md                 # 本說明文件
 ```
 
-## 客製化設定
-
-### 按鈕行為設定
-
-在 `windows/config.py` 中，可以修改 `BUTTON_ACTION_BEHAVIOR` 字典來自定義單擊、雙擊和長按的行為：
-
-```python
-BUTTON_ACTION_BEHAVIOR = {  # "send", "call", "debug"
-    "single": "send",  # 單擊發送消息
-    "double": "call",  # 雙擊撥打電話
-    "long"  : "debug"  # 長按發送診斷消息
-}
-```
-
-### 警報閾值設定
-
-可以調整以下閾值來控制何時發出設備狀態警告：
-
-```python
-BATTERY_ALARM_THRESHOLD = 30    # 電池電量(%)
-VOLTAGE_ALARM_THRESHOLD = 2400  # 電池電壓(mV)
-LINK_ALARM_THRESHOLD = 60       # 連接品質
-```
-
 ## 故障排除
 
 ### Ubuntu 端問題
@@ -133,7 +90,6 @@ LINK_ALARM_THRESHOLD = 60       # 連接品質
 - 檢查LINE應用是否正常啟動
 - 檢查`images`目錄中的截圖是否與當前LINE界面匹配
 - 查看日誌文件位於 `logs` 目錄
-
 
 ## Reference 
 - [How to Flash Firmware on SONOFF ZBDongle-E: Step-by-Step Tutorial](https://sonoff.tech/product-review/tutorial/how-to-flash-firmware-on-sonoff-zbdongle-e-step-by-step-tutorial/)
