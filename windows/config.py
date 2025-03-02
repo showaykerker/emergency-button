@@ -14,15 +14,11 @@ MQTT_RECONNECT_DELAY = 5  # seconds
 MQTT_MAX_RECONNECT_ATTEMPTS = 10
 
 # Button Behavior
-BUTTON_ACTION_BEHAVIOR = {
+BUTTON_ACTION_BEHAVIOR = {  # "send", "call", "debug"
     "single": "send",
     "double": "call",
     "long"  : "debug"
 }
-SINGLE_CLICK_ACTION = "send"
-DOUBLE_CLICK_ACTION = "call"
-LONG_CLICK_ACTION = "debug"
-
 # Button Alert Thresholds
 BATTERY_ALARM_THRESHOLD = 30    # %
 VOLTAGE_ALARM_THRESHOLD = 2400  # mV
