@@ -136,7 +136,7 @@ class MQTTHandler:
             # Extract data from message
             # z2m:mqtt: MQTT publish: topic 'zigbee2mqtt/btn1', payload '{"action":"single","battery":100,"linkquality":160,"voltage":3000}'
             try:
-                data.update({'topic': topic})
+                data.update({'topic': topic.split("/")[-1]})
 
                 identifier += f" - {topic}"
                 log.info(f"ID {identifier} | Parsed message: topic={topic}, data={data}")
