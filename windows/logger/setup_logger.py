@@ -39,24 +39,27 @@ if config.ENABLE_DISOCRD_BOT_LOGGING:
         )
         # Create Discord-specific formatter
         discord_formatter = logging.Formatter(
-            '%(asctime)s - **%(levelname)s** - `%(message)s`', 
+            '%(asctime)s - **%(levelname)s** - `%(message)s`',
             '%Y-%m-%d %H:%M:%S'
         )
-        
+
         # Set the specific log level for the Discord handler
         discord_handler.setLevel(config.BOT_LOG_LEVEL)
-        discord_handler.setFormatter(discord_formatter)    
+        discord_handler.setFormatter(discord_formatter)
 
 def setup_logger(name,
-        log_level=logging.INFO, console_output=True, file_output=True, dc_output=True):
+        console_log_level=logging.INFO, console_output=True,
+        file_log_level=logging.DEBUG, file_output=True,
+        dc_output=True):
     """
     Configure and return a logger with the specified name.
     Uses TimedRotatingFileHandler to automatically rotate logs by time.
 
     Args:
         name (str): The name of the logger
-        log_level (int): The logging level (default: logging.INFO)
+        console_log_level (int): The logging level for console output (default: logging.INFO)
         console_output (bool): Whether to output logs to console
+        file_log_level (int): The logging level for file output (default: logging.DEBUG)
         file_output (bool): Whether to output logs to file
         dc_output (bool): Whether to output logs to DC Bot
 
@@ -64,28 +67,32 @@ def setup_logger(name,
         logging.Logger: Configured logger instance
     """
     logger = logging.getLogger(name)
-    logger.setLevel(log_level)
+
 
     # Remove existing handlers to avoid duplicates
     for handler in logger.handlers[:]:
         logger.removeHandler(handler)
 
-    # Create formatter
-    formatter = logging.Formatter(
-        '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
+    logger.setLevel(logging.DEBUG)
 
     # Add console handler if requested
     if console_output:
+        formatter = logging.Formatter(
+            '\033[1:33m%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s\033[0m',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
+        console_handler.setLevel(console_log_level)
         logger.addHandler(console_handler)
 
     # Add timed rotating file handler if requested
     if file_output:
         log_file = os.path.join(log_dir, f"{name}.log")
-
+        formatter = logging.Formatter(
+            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
         # Create a timed rotating file handler
         file_handler = TimedRotatingFileHandler(
             filename=log_file,
@@ -98,6 +105,7 @@ def setup_logger(name,
 
         # Apply the formatter to the file handler
         file_handler.setFormatter(formatter)
+        file_handler.setLevel(file_log_level)
 
         # Standard log rotation suffix - this is important for proper cleanup
         # Don't modify this unless you also modify the namer and rotator functions
