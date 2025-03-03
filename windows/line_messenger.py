@@ -184,9 +184,9 @@ class LineMessenger:
             pyautogui.press('win')        # Open start menu
             time.sleep(0.2)
             self.input_text('line', True) # Search for LINE and press Enter
-            logger.info("LINE app start command sent")
+            logger.info("\tLINE app start command sent")
         except Exception as e:
-            logger.critical(f"Error starting LINE app: {e}")
+            logger.critical(f"\tError starting LINE app: {e}")
             raise LineUIException("Failed to start LINE application") from e
 
     def shutdown_if_line_not_logged_in(self):
@@ -221,22 +221,22 @@ class LineMessenger:
         # Try to find the LINE app window
         for attempt in range(max_attempts):
             if self.found_line_logged_in_and_started():
-                logger.info("LINE app is already open. ")
+                logger.info("\tLINE app is already open. ")
                 return True
 
             # Try to find and click LINE icon on desktop/taskbar
             line_icon = self.locate_on_screen(config.LINE_ICON, confidence=0.9, click=True)
             if line_icon is None and attempt < max_attempts - 1:
-                logger.warning(f"LINE icon not found, attempting to start LINE (attempt {attempt+1}/{max_attempts})")
+                logger.warning(f"\tLINE icon not found, attempting to start LINE (attempt {attempt+1}/{max_attempts})")
                 self.start_line_app()
 
             # Wait for LINE to open
             wait_start = time.time()
             while time.time() - wait_start < 30:  # 15-second timeout for app to open
-                logger.info(f"Sleep for 0.5 seconds to wait for line to open")
+                logger.info(f"\tSleep for 0.5 seconds to wait for line to open")
                 time.sleep(0.5)
                 if self.found_line_logged_in_and_started():
-                    logger.info(f"LINE app opened successfully after attempt {attempt+1}.")
+                    logger.info(f"\tLINE app opened successfully after attempt {attempt+1}.")
                     return True
 
         logger.critical("Failed to open LINE app after multiple attempts.")
@@ -249,61 +249,61 @@ class LineMessenger:
         Returns:
             bool: True if successfully navigated, False otherwise
         """
-        logger.info("Navigating to target chat group")
+        logger.info("\tNavigating to target chat group")
 
         try:
             group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab", confidence=0.9993)
             group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated", confidence=0.9993)
             if bool(group_tab) == bool(group_tab_activated):
-                logger.warning("Group Tab activate status not clear here.")
+                logger.warning("\t\tGroup Tab activate status not clear here.")
 
             if group_tab is None and group_tab_activated is None:
-                logger.info("group tabs not found, click on left bar first!")
+                logger.info("\t\tgroup tabs not found, click on left bar first!")
                 # Find the chat navigation area in the left sidebar
                 icon1 = self.wait_for_image(config.LINE_LEFT_BAR_ICON_1, cache_key="left_bar_icon_1")
                 icon3 = self.wait_for_image(config.LINE_LEFT_BAR_ICON_3, cache_key="left_bar_icon_3")
 
                 if icon1 is None or icon3 is None:
-                    logger.error("Could not find LINE navigation icons")
+                    logger.error("\t\tCould not find LINE navigation icons")
                     return False
 
                 # Click in the middle of the chat area to focus
                 x = icon1.left + int(icon1.width // 2)
                 y = int((icon1.top + icon3.top + icon3.height)//2)
-                logger.debug(f"Clicking chat area at {x}, {y}")
+                logger.debug(f"\t\tClicking chat area at {x}, {y}")
                 pyautogui.moveTo(x, y, duration=config.MOUSE_MOVE_DURATION)
                 pyautogui.click(x, y)
                 time.sleep(config.SLEEP_AFTER_CLICK)
             else:
-                logger.info(f"Already found group tabs, skip. "\
+                logger.debug(f"\t\tAlready found group tabs, skip. "\
                     f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
 
             if group_tab_activated is None:
                 # Click group tab and select target group
-                logger.info("group tab not activated, click on group tab first.")
+                logger.debug("\t\tgroup tab not activated, click on group tab first.")
                 if not self.wait_for_image(config.GROUP_TAB, click=True, cache_key="group_tab", confidence=0.8):
-                    logger.error("Could not find groups tab")
+                    logger.error("\t\tCould not find groups tab")
                     return False
             else:
-                logger.info("group tab already activated, skip clicking on group tab")
+                logger.debug("\t\tgroup tab already activated, skip clicking on group tab")
 
-            logger.info("wait for group name")
+            logger.debug("\t\twait for group name")
 
             if not self.wait_for_image(config.TARGET_GROUP_NAME, click=True):
-                logger.error("Could not find target group")
+                logger.error("\t\tCould not find target group")
                 return False
 
-            logger.info("wait for input box")
+            logger.debug("\t\twait for input box")
 
             if not self.wait_for_image(config.INPUT_BOX, click=True):
-                logger.error("Could not find message input box")
+                logger.error("\t\tCould not find message input box")
                 return False
 
-            logger.info("Successfully navigated to target group")
+            logger.info("\t\tSuccessfully navigated to target group")
             return True
 
         except Exception as e:
-            logger.error(f"Error navigating to target group: {e}", exc_info=True)
+            logger.error(f"\t\tError navigating to target group: {e}", exc_info=True)
             return False
 
     def send_message(self, message="", max_retries=2, call_instead=False):
@@ -319,9 +319,9 @@ class LineMessenger:
             bool: True if message sent successfully, False otherwise
         """
         if message is None:
-            logger.info(f"send_message Get empty message.")
+            logger.debug(f"send_message Get empty message.")
         else:
-            logger.info(f"send_message length: {len(message)}")
+            logger.debug(f"send_message length: {len(message)}")
 
         for attempt in range(max_retries + 1):
             try:
@@ -351,7 +351,7 @@ class LineMessenger:
                     return True
 
                 # Call INSTEAD
-                logger.info("CALL INSTEAD")
+                logger.info("CALL")
                 if not self.wait_for_image(config.CALL_ICON, click=True):
                     logger.error("Could not find call icon.")
                     return False
@@ -371,7 +371,7 @@ class LineMessenger:
                 # Clear cache to force fresh UI detection
                 self.ui_cache.clear()
                 self.cache_timestamps.clear()
-                logger.info(f"Sleep for 2 second before retry")
+                logger.debug(f"Sleep for 2 second before retry")
                 time.sleep(2)  # Wait before retry
 
         return False

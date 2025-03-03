@@ -51,9 +51,9 @@ class MessageQueueProcessor(Thread):
                 result = send_message(message, call_instead=action == "call")
                 
                 if result:
-                    self.logger.info(f"ID {identifier} | Message sent successfully to LINE")
+                    self.logger.info(f"ID {identifier} | Message sent successfully to LINE\n")
                 else:
-                    self.logger.critical(f"ID {identifier} | Failed to send message to LINE")
+                    self.logger.critical(f"ID {identifier} | Failed to send message to LINE\n")
                 
                 # Mark task as done
                 self.queue.task_done()

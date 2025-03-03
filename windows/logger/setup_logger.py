@@ -78,7 +78,7 @@ def setup_logger(name,
     # Add console handler if requested
     if console_output:
         formatter = logging.Formatter(
-            '\033[1:33m%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s\033[0m',
+            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         console_handler = logging.StreamHandler(sys.stdout)

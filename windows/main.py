@@ -17,7 +17,7 @@ from message_queue_processor import MessageQueueProcessor
 from message_handler import MessageHandler
 
 # Setup logger
-log = setup_logger("mqtt_client")
+log = setup_logger("main")
 
 def main():
     """
@@ -62,7 +62,7 @@ def main():
             processor.stop()
             processor.wait_completion()
         
-    log.info("Program terminated")
+    log.critical("Program terminated")
 
 
 if __name__ == "__main__":
