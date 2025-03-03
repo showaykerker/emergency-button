@@ -12,7 +12,7 @@ import config
 from logger import setup_logger
 
 # Setup logger
-log = setup_logger("message_handler")
+log = setup_logger("msg_hdl")
 
 class MessageHandler:
     """

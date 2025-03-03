@@ -10,7 +10,7 @@ import config
 from logger import setup_logger
 
 # Setup logger
-log = setup_logger("mqtt_connection")
+log = setup_logger("mqtt_conn")
 
 class MQTTConnection:
     """

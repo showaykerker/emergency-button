@@ -10,7 +10,7 @@ from logger import setup_logger
 import config
 
 # Setup logger
-logger = setup_logger("line_messenger")
+logger = setup_logger("line_msngr")
 
 class LineUIException(Exception):
     """Exception raised for errors in LINE UI interactions."""

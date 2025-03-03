@@ -26,7 +26,7 @@ class MessageQueueProcessor(Thread):
         super().__init__(daemon=True)
         self.queue = message_queue or queue.Queue(maxsize=100)
         self.should_stop = Event()
-        self.logger = setup_logger("message_queue_processor")
+        self.logger = setup_logger("msg_queue")
     
     def run(self):
         """Main processing loop."""
