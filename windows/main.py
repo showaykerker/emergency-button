@@ -2,7 +2,13 @@
 MQTT client for handling Zigbee2MQTT messages and sending them to LINE.
 Uses separate modules for connection management, message processing and handling.
 """
+import os
 import sys
+
+sys_path = sys.path
+curr_folder = os.path.abspath(os.path.dirname(__file__))
+if curr_folder not in sys_path:
+    sys.path.insert(0, curr_folder)
 
 import config
 from logger import setup_logger
