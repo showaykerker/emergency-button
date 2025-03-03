@@ -197,11 +197,13 @@ class LineMessenger:
 
     def found_line_logged_in_and_started(self):
         self.shutdown_if_line_not_logged_in()
-        icon1 = self.locate_on_screen(config.LINE_LEFT_BAR_ICON_1, cache_key="left_bar_icon_1")
+        icon1 = self.locate_on_screen(config.LINE_LEFT_BAR_ICON_1)
+        icon3 = self.locate_on_screen(config.LINE_LEFT_BAR_ICON_3)
         group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab", confidence=0.9993)
         group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated", confidence=0.9993)
         logger.debug(f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
-        return icon1 is not None or group_tab is not None or group_tab_activated is not None
+        return (icon1 or icon3) and (group_tab or group_tab_activated)
+        # return icon1 is not None or group_tab is not None or group_tab_activated is not None
 
     def ensure_line_app_opened(self, max_attempts=3):
         """
@@ -233,11 +235,15 @@ class LineMessenger:
             # Wait for LINE to open
             wait_start = time.time()
             while time.time() - wait_start < 30:  # 15-second timeout for app to open
-                logger.info(f"\tSleep for 0.5 seconds to wait for line to open")
-                time.sleep(0.5)
                 if self.found_line_logged_in_and_started():
                     logger.info(f"\tLINE app opened successfully after attempt {attempt+1}.")
                     return True
+                logger.info(f"\tSleep for 0.5 seconds to wait for line to open")
+                time.sleep(0.5)
+
+            if self.found_line_logged_in_and_started():
+                logger.info(f"\tLINE app opened successfully after attempt {attempt+1}.")
+                return True
 
         logger.critical("Failed to open LINE app after multiple attempts.")
         raise LineUIException("Could not open LINE application after multiple attempts")
