@@ -193,6 +193,7 @@ class LineMessenger:
         line_login = self.locate_on_screen(config.LINE_LOGIN, confidence=0.5)
         if line_login is not None:
             logger.critical("LINE IS NOT LOGGED IN !!! PLEASE LOG IN AND MANUALLY RESTART.")
+            input("\nPress Enter to Stop....\n\n")
             exit(0)
 
     def found_line_logged_in_and_started(self):

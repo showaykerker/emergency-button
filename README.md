@@ -22,9 +22,9 @@
 
 ## 開始使用
 1. 開啟桌面上的 `VMware Workstation 17 Player` 並點選 Ubuntu，然後縮到最小放著不管。注意，如果沒有縮到最小，有一點可能會影響到自動化操作。
-2. 打開 `Line`並且登入。若在一開始就沒登入的話，畫面會顯示「`LINE IS NOT LOGGED IN !!! PLEASE LOG IN AND MANUALLY RESTART.`」，此時 `Discord Bot` 通常尚未連接成功，因此不會觸發 `Discord Bot` 通知。
-3. 點選 `start.bat` ，這個執行檔會檢查 `Ubuntu VM` 以及 `Line` 是否被開啟。但是它無法檢查 `Line` 是否登入，因此請人工確保。若依竊沒問題，畫面上會出現 Log 的資訊，如果沒有什麼 `Error` 的話，應該就是一切正常。
-4. 程式開始時會把 `Line` 打開，盡量保持不要有任何東西遮擋，這樣可以加快收到按鈕訊息到傳送訊息之間的時間。
+2. 打開 `Line`並且登入。
+3. 點選 `start.bat` ，這個執行檔會檢查 `Ubuntu VM` 以及 `Line` 的 App 是否啟動。
+4. 檢查結束後 `Line` 會被至於最頂，盡量保持不要有任何東西遮擋，這樣可以加快收到按鈕訊息到傳送訊息之間的時間。若 `Line` 沒登入的話，畫面會顯示「**LINE IS NOT LOGGED IN !!! PLEASE LOG IN AND MANUALLY RESTART.**」。 須關閉視窗後登入 `Line` 並且重新執行 `start.bat` 。若一切沒問題，畫面上會出現 Log 的資訊，如果沒有什麼 Error 的話，應該就是都正常。
 5. 已經設定讓電腦不休眠，請**把螢幕關閉就好**，不要讓它自動鎖定。
 
 ## 必要設定
