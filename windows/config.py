@@ -41,6 +41,7 @@ IMAGE_DIR = Path(__file__).parent / "images"
 LINE_ICON            = str(IMAGE_DIR / "line-icon.png")
 LINE_LEFT_BAR_ICON_1 = str(IMAGE_DIR / "line-left-bar-icon-1.png")
 LINE_LEFT_BAR_ICON_3 = str(IMAGE_DIR / "line-left-bar-icon-3.png")
+LINE_LOGIN           = str(IMAGE_DIR / "line-login.png")
 GROUP_TAB            = str(IMAGE_DIR / "group-tab.png")
 GROUP_TAB_ACTIVATED  = str(IMAGE_DIR / "group-tab-activated.png")
 TARGET_GROUP_NAME    = str(IMAGE_DIR / "target-group-name.png")

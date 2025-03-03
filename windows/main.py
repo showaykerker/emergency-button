@@ -50,9 +50,9 @@ def main():
             sys.exit(1)
             
     except KeyboardInterrupt:
-        log.info("Received interrupt signal, shutting down...")
+        log.critical("Received interrupt signal, shutting down...")
     except Exception as e:
-        log.error(f"Error: {e}")
+        log.critical(f"Error: {e}. The system is shut down.")
         sys.exit(1)
     finally:
         # Clean shutdown

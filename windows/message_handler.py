@@ -47,34 +47,34 @@ class MessageHandler:
         try:
             msg_text = msg.payload.decode()
             topic = msg.topic
-            log.info(f"ID {identifier} | Received message on {msg.topic}: {msg_text[:200]}...")
+            log.debug(f"ID {identifier} | Received message on {msg.topic}: {msg_text[:200]}...")
 
             # Parse JSON data
             data = json.loads(msg_text)
 
             if "logging" in topic:
-                log.info(f"ID {identifier} | ignore msg from `logging`")
+                log.debug(f"ID {identifier} | ignore msg from `logging`")
                 return
 
             if type(data) is not dict:
-                log.info(f"ID {identifier} | ignore data type {type(data)}")
+                log.debug(f"ID {identifier} | ignore data type {type(data)}")
                 return
 
             if "action" not in data:
-                log.info(f"ID {identifier} | ignore msg without 'action' key")
+                log.debug(f"ID {identifier} | ignore msg without 'action' key")
                 return
 
             # Enrich data with topic
             data.update({'topic': topic.split("/")[-1]})
             identifier += f" - {topic}"
-            log.info(f"ID {identifier} | Parsed message: topic={topic}, data={data}")
+            log.debug(f"ID {identifier} | Parsed message: topic={topic}, data={data}")
 
             # Compose message
             action, message = self._compose_message(data)
             
             # Skip adding to queue if it's just a background ping
             if action == "bg_ping":
-                log.info(f"ID {identifier} | Background check, still alive.")
+                log.debug(f"ID {identifier} | Background check, still alive.")
                 return
                 
             success = self.processor.enqueue_message(identifier, action, message)
@@ -106,7 +106,7 @@ class MessageHandler:
         linkquality = int(data.get('linkquality') or -1)
 
         if action is None:
-            log.info(f"Get msg without action, possibly a bg ping: {data}")
+            log.debug(f"Get msg without action, possibly a bg ping: {data}")
             return "bg_ping", None
 
         if config.BUTTON_ACTION_BEHAVIOR.get(action) == "call":

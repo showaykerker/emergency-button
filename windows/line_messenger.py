@@ -27,6 +27,7 @@ class LineMessenger:
         self.ui_cache = {}
         self.cache_lifetime = config.IMAGE_CACHE_LIFETIME  # seconds
         self.cache_timestamps = {}
+        self.ensure_line_app_opened()
 
     def locate_on_screen(self, target, confidence=None, click=False,
                         move_before_click=True, cache_key=None):
@@ -185,8 +186,22 @@ class LineMessenger:
             self.input_text('line', True) # Search for LINE and press Enter
             logger.info("LINE app start command sent")
         except Exception as e:
-            logger.error(f"Error starting LINE app: {e}")
+            logger.critical(f"Error starting LINE app: {e}")
             raise LineUIException("Failed to start LINE application") from e
+
+    def shutdown_if_line_not_logged_in(self):
+        line_login = self.locate_on_screen(config.LINE_LOGIN, confidence=0.5)
+        if line_login is not None:
+            logger.critical("LINE IS NOT LOGGED IN !!! PLEASE LOG IN AND MANUALLY RESTART.")
+            exit(0)
+
+    def found_line_logged_in_and_started(self):
+        self.shutdown_if_line_not_logged_in()
+        icon1 = self.locate_on_screen(config.LINE_LEFT_BAR_ICON_1, cache_key="left_bar_icon_1")
+        group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab", confidence=0.9993)
+        group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated", confidence=0.9993)
+        logger.debug(f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
+        return icon1 is not None or group_tab is not None or group_tab_activated is not None
 
     def ensure_line_app_opened(self, max_attempts=3):
         """
@@ -205,16 +220,12 @@ class LineMessenger:
 
         # Try to find the LINE app window
         for attempt in range(max_attempts):
-            icon1 = self.locate_on_screen(config.LINE_LEFT_BAR_ICON_1, cache_key="left_bar_icon_1")
-            group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab", confidence=0.9993)
-            group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated", confidence=0.9993)
-            if icon1 is not None or group_tab is not None or group_tab_activated is not None:
-                logger.info("LINE app is already open. "\
-                    f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
+            if self.found_line_logged_in_and_started():
+                logger.info("LINE app is already open. ")
                 return True
 
             # Try to find and click LINE icon on desktop/taskbar
-            line_icon = self.locate_on_screen(config.LINE_ICON, confidence=0.8, click=True)
+            line_icon = self.locate_on_screen(config.LINE_ICON, confidence=0.9, click=True)
             if line_icon is None and attempt < max_attempts - 1:
                 logger.warning(f"LINE icon not found, attempting to start LINE (attempt {attempt+1}/{max_attempts})")
                 self.start_line_app()
@@ -224,15 +235,11 @@ class LineMessenger:
             while time.time() - wait_start < 30:  # 15-second timeout for app to open
                 logger.info(f"Sleep for 0.5 seconds to wait for line to open")
                 time.sleep(0.5)
-                icon1 = self.locate_on_screen(config.LINE_LEFT_BAR_ICON_1, cache_key="left_bar_icon_1")
-                group_tab = self.locate_on_screen(config.GROUP_TAB, cache_key="group_tab")
-                group_tab_activated = self.locate_on_screen(config.GROUP_TAB_ACTIVATED, cache_key="group_tab_activated")
-                if icon1 is not None or group_tab is not None or group_tab_activated is not None:
-                    logger.info(f"LINE app opened successfully after attempt {attempt+1}. "\
-                        f"group_tab: {bool(group_tab)}, group_tab_activated: {bool(group_tab_activated)}")
+                if self.found_line_logged_in_and_started():
+                    logger.info(f"LINE app opened successfully after attempt {attempt+1}.")
                     return True
 
-        logger.error("Failed to open LINE app after multiple attempts")
+        logger.critical("Failed to open LINE app after multiple attempts.")
         raise LineUIException("Could not open LINE application after multiple attempts")
 
     def navigate_to_target_group(self):
