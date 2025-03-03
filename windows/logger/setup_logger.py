@@ -21,7 +21,7 @@ from .discord_bot_handler import DiscordBotHandler
 load_dotenv()
 
 # Create logs directory if it doesn't exist
-log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
+log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "logs")
 os.makedirs(log_dir, exist_ok=True)
 
 # To prevent bot being init multiple times
@@ -78,7 +78,7 @@ def setup_logger(name,
     # Add console handler if requested
     if console_output:
         formatter = logging.Formatter(
-            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s',
+            '%(asctime)s.%(msecs)03d - %(name)-10s - %(levelname)-5s - %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         console_handler = logging.StreamHandler(sys.stdout)
@@ -90,7 +90,7 @@ def setup_logger(name,
     if file_output:
         log_file = os.path.join(log_dir, f"{name}.log")
         formatter = logging.Formatter(
-            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s',
+            '%(asctime)s.%(msecs)03d - %(name)-10s - %(levelname)-5s - %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         # Create a timed rotating file handler
