@@ -2,14 +2,23 @@
 Logger configuration module for the MQTT to LINE messaging system.
 Uses TimedRotatingFileHandler for automatic log rotation with reliable cleanup.
 """
-import logging
 import os
 import sys
+
+sys_path = sys.path
+curr_folder = os.path.abspath(os.path.dirname(__file__))
+if curr_folder not in sys_path:
+    sys.path.insert(0, curr_folder)
+
+import logging
 from datetime import datetime
 from logging.handlers import TimedRotatingFileHandler
+from dotenv import load_dotenv
 
 import config
-from .discord_bot_logging_handler import DiscordBotLoggingHandler
+from .discord_bot_handler import DiscordBotHandler
+
+load_dotenv()
 
 # Create logs directory if it doesn't exist
 log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
