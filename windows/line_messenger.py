@@ -5,6 +5,7 @@ import pyautogui
 import pyperclip
 import time
 import os
+
 from logger import setup_logger
 import config
 

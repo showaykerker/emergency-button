@@ -9,6 +9,7 @@ from datetime import datetime
 from logging.handlers import TimedRotatingFileHandler
 
 import config
+from .discord_bot_logging_handler import DiscordBotLoggingHandler
 
 # Create logs directory if it doesn't exist
 log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
