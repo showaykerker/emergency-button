@@ -4,6 +4,7 @@ Configuration settings for the MQTT to LINE messaging system.
 import os
 import argparse
 from pathlib import Path
+import logging
 
 ############# MQTT Settings #############
 MQTT_BROKER = "192.168.108.128"
@@ -50,9 +51,11 @@ START_CALL           = str(IMAGE_DIR / "start-call.png")
 CANCEL_CALL          = str(IMAGE_DIR / "cancel-call.png")
 
 ############ Log Configs ############
-LOG_ROTATE_WHEN = "W0"          # When to trigger check, 'H', "M", "S", "D", "W0-W6", "midnight"
-LOG_ROTATE_INTERVAL = 7         # How many 'when' in one file
-LOG_ROTATE_BACKUPCOUNT = 8      # Preserve how many files
+LOG_ROTATE_WHEN = "W0"             # When to trigger check, 'H', "M", "S", "D", "W0-W6", "midnight"
+LOG_ROTATE_INTERVAL = 7            # How many 'when' in one file
+LOG_ROTATE_BACKUPCOUNT = 8         # Preserve how many files
+ENABLE_DISOCRD_BOT_LOGGING = True  #
+BOT_LOG_LEVEL = logging.CRITICAL   #
 
 
 ############ Validation ################################################

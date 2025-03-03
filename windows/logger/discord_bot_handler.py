@@ -70,8 +70,7 @@ class DiscordBotHandler(logging.Handler):
                 self.ready.set()
                 self.process_queue.start()
                 
-                # Start background command sync
-                asyncio.create_task(self.sync_commands_background())
+                await self.sync_commands()
             
             @tasks.loop(seconds=1)
             async def process_queue():
@@ -82,7 +81,7 @@ class DiscordBotHandler(logging.Handler):
                             channel = self.bot.get_channel(self.channel_id)
                             if channel:
                                 await channel.send(message)
-                                print(f"Sent message to Discord: {message}")
+                                # print(f"Sent message to Discord: {message}")
                             else:
                                 print(f"Channel {self.channel_id} not found")
                     except Exception as e:
@@ -94,32 +93,16 @@ class DiscordBotHandler(logging.Handler):
         self.thread = threading.Thread(target=run_bot, daemon=True)
         self.thread.start()
     
-    async def sync_commands_background(self):
-        """Sync commands in the background after bot is connected"""
+    async def sync_commands(self):
         if self.commands_synced:  # Prevent multiple syncs
             return
-            
         try:
-            print("Starting background command sync...")
             await asyncio.sleep(2)  # Short delay to ensure bot is fully initialized
-            
-            # Sync the commands
             await self.bot.tree.sync()
             self.commands_synced = True
-            
-            print("Slash commands synced successfully")
-            
-            # Send a message to the channel to confirm
-            channel = self.bot.get_channel(self.channel_id)
-            if channel:
-                await channel.send("✅ Bot initialization complete - slash commands are now ready to use")
         except Exception as e:
             error_msg = f"Error syncing commands: {str(e)}"
             print(error_msg)
-            # Try to notify in the channel
-            channel = self.bot.get_channel(self.channel_id)
-            if channel:
-                await channel.send(f"⚠️ Error syncing commands: {str(e)}")
 
     def emit(self, record):
         """
@@ -156,9 +139,6 @@ if __name__ == '__main__':
     
     if not bot_token or not channel_id:
         print("Please set DISCORD_BOT_TOKEN and DISCORD_CHANNEL_ID environment variables.")
-        print("Example:")
-        print("export DISCORD_BOT_TOKEN='your-bot-token'")
-        print("export DISCORD_CHANNEL_ID='123456789012345678'")
         exit(1)
     
     # Configure logging

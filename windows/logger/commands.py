@@ -67,7 +67,7 @@ def register_commands(bot, channel_id):
     @bot.tree.command(name="delete_time_range", description="Delete messages within a specified time range")
     async def delete_time_range(
         interaction: discord.Interaction, 
-        hours_ago: int = 24, 
+        hours_ago: int = 0, 
         minutes_ago: int = 0,
         all_users: bool = True
     ):

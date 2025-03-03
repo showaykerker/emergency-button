@@ -24,7 +24,31 @@ load_dotenv()
 log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
 os.makedirs(log_dir, exist_ok=True)
 
-def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=True):
+# To prevent bot being init multiple times
+discord_handler = None
+if config.ENABLE_DISOCRD_BOT_LOGGING:
+    # Launch only 1 discord bot
+    bot_token = os.environ.get("DISCORD_BOT_TOKEN")
+    channel_id = os.environ.get("DISCORD_CHANNEL_ID")
+    if bot_token is None or channel_id is None:
+        print("Please set DISCORD_BOT_TOKEN and DISCORD_CHANNEL_ID environment variables.")
+    else:
+        discord_handler = DiscordBotHandler(
+            bot_token=bot_token,
+            channel_id=channel_id
+        )
+        # Create Discord-specific formatter
+        discord_formatter = logging.Formatter(
+            '%(asctime)s - **%(levelname)s** - `%(message)s`', 
+            '%Y-%m-%d %H:%M:%S'
+        )
+        
+        # Set the specific log level for the Discord handler
+        discord_handler.setLevel(config.BOT_LOG_LEVEL)
+        discord_handler.setFormatter(discord_formatter)    
+
+def setup_logger(name,
+        log_level=logging.INFO, console_output=True, file_output=True, dc_output=True):
     """
     Configure and return a logger with the specified name.
     Uses TimedRotatingFileHandler to automatically rotate logs by time.
@@ -34,6 +58,7 @@ def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=
         log_level (int): The logging level (default: logging.INFO)
         console_output (bool): Whether to output logs to console
         file_output (bool): Whether to output logs to file
+        dc_output (bool): Whether to output logs to DC Bot
 
     Returns:
         logging.Logger: Configured logger instance
@@ -79,5 +104,9 @@ def setup_logger(name, log_level=logging.INFO, console_output=True, file_output=
         # file_handler.suffix = "%Y-%m-%d-%H-%M-%S"
 
         logger.addHandler(file_handler)
+
+    # Add Discord Bot Handler For logs at specified level
+    if dc_output and config.ENABLE_DISOCRD_BOT_LOGGING and discord_handler:
+        logger.addHandler(discord_handler)
 
     return logger
