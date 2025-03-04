@@ -15,9 +15,11 @@
    - 接收來自 zigbee2mqtt 的按鈕觸發事件
    - 以 PyAutoGUI 自動化操作LINE桌面應用程式
    - 在特定的群組發送Line訊息或撥打Line語音
+   - Line 操作失敗時發送 Discord 訊息通知
 
 - 選用 Ubuntu 是因為 Zigbee USB Dongle 在 Windows 上的驅動支援不佳，因此以虛擬機的方式處理，並使用 systemd 與 docker compose 自動開啟 Zigbee2MQTT 及 Mosquitto Server。
 - 選用 Windows 作為 Host 則是因為 Line APP 原生支援 Windows ，擁有較高的穩定性。
+- 選用 Line 是因為大部分台灣人手機都有安裝，使用上阻力較小，只有在 Line 發送失敗時傳送通知到 Discord 頻道，只有管理人員需要額外安裝 Discord。若可以全部使用 Discord ，整個系統能夠更精簡穩定，使用一片約4000元內的 Raspberry Pi 且不需要 Windows 系統即可。
 
 
 ## 快速開始
