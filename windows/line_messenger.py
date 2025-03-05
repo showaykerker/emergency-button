@@ -206,7 +206,7 @@ class LineMessenger:
         return (icon1 or icon3) and (group_tab or group_tab_activated)
         # return icon1 is not None or group_tab is not None or group_tab_activated is not None
 
-    def ensure_line_app_opened(self, max_attempts=3):
+    def ensure_line_app_opened(self, max_attempts=2):
         """
         Ensure the LINE application is open and visible.
 
@@ -235,12 +235,12 @@ class LineMessenger:
 
             # Wait for LINE to open
             wait_start = time.time()
-            while time.time() - wait_start < 30:  # 15-second timeout for app to open
+            while time.time() - wait_start < 1:  # 15-second timeout for app to open
                 if self.found_line_logged_in_and_started():
                     logger.info(f"\tLINE app opened successfully after attempt {attempt+1}.")
                     return True
-                logger.info(f"\tSleep for 0.5 seconds to wait for line to open")
-                time.sleep(0.5)
+                logger.info(f"\tSleep for 0.1 seconds to wait for line to open")
+                time.sleep(0.1)
 
             if self.found_line_logged_in_and_started():
                 logger.info(f"\tLINE app opened successfully after attempt {attempt+1}.")
