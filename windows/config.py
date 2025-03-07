@@ -15,9 +15,9 @@ MQTT_RECONNECT_DELAY = 5  # seconds
 MQTT_MAX_RECONNECT_ATTEMPTS = 10
 
 ############# Button Behavior ############
-BUTTON_ACTION_BEHAVIOR = {  # "send", "call", "debug"
+BUTTON_ACTION_BEHAVIOR = {  # "send", "cancel", "debug"
     "single": "send",
-    "double": "call",
+    "double": "cancel",
     "long"  : "debug"
 }
 
