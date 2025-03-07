@@ -351,8 +351,8 @@ class LineMessenger:
 
 
         try:
-            # Cancel call
             if action == "cancel":
+                # Cancel call
                 if self.cancel_call():
                     logger.info("Cancel Call")
                 else:
