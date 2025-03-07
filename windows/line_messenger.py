@@ -356,7 +356,7 @@ class LineMessenger:
                 if self.cancel_call():
                     logger.info("Cancel Call")
                 else:
-                    logger.critical("Failed to cancel call")
+                    logger.warning("Failed to cancel call")
 
             # Ensure LINE is open
             self.ensure_line_app_opened()

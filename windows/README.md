@@ -44,6 +44,7 @@ pip install -r requirements.txt
   - `line-left-bar-icon-1.png` - LINE 左側導航列的第一個圖示
   - `line-left-bar-icon-3.png` - LINE 左側導航列的第三個圖示
   - `target-group-name.png` - **目標群組名稱** (應該只需要設定這個)
+  - `mini-cancel-preview.png` - 通話取消預覽
 
 ## 使用方法
 
@@ -66,13 +67,18 @@ hch-emergency-button/
 ├── message_handler.py         # 解讀 MQTT msg，並產生要傳出的訊息
 ├── line_messenger.py          # LINE消息發送模塊
 │
-├── logger.py
+├── logger
+│   ├── setup_logger.py        # Logger 實作
+│   ├── discord_bot_handler.py # Discord bot handler 實作
+│   ├── commands.py            # Discord slash commands 實作
+│   └── README.md              # Discord slash commands 實作
 │
 ├── images/                    # 圖像文件夾
 │   ├── call-icon.png
 │   ├── ...
 │   ├── ...
 │   └── target-group-name.png
+|
 ├── start.bat
 ├── requirements.txt
 └── README.md                  # 說明文件

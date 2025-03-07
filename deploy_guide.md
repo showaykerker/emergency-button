@@ -54,27 +54,31 @@
 ```
 hch-emergency-button/
 │
-├── ubuntu/                   # Ubuntu VM 端相關設定和文件
-│   ├── docker-compose.yaml   # Docker 組合設定
-│   ├── mosquitto/            # Mosquitto 設定與 runtime 資料儲存
-│   ├── zigbee2mqtt/          # Zigbee2MQTT 設定與 runtime 資料儲存
-│   ├── docker-compose.yaml/  # Zigbee2MQTT 設定與 runtime 資料儲存
+├── ubuntu/                         # Ubuntu VM 端相關設定和文件
+│   ├── docker-compose.yaml         # Docker 組合設定
+│   ├── mosquitto/                  # Mosquitto 設定與 runtime 資料儲存
+│   ├── zigbee2mqtt/                # Zigbee2MQTT 設定與 runtime 資料儲存
+│   ├── docker-compose.yaml/        # Zigbee2MQTT 設定與 runtime 資料儲存
 │   ├── mosquitto-zigbee2mqtt-docker-compose.service
-│   └── README.md             # Ubuntu 端設定說明
+│   └── README.md                   # Ubuntu 端設定說明
 │
-├── windows/                  # Windows 端應用程式
-│   ├── config.py             # 配置文件
-│   ├── main.py               # 主應用程式入口
-│   ├── mqtt_connection.py    # MQTT 連接處理
-│   ├── message_handler.py    # 消息解析和處理
-│   ├── message_processor.py  # 消息隊列處理
-│   ├── line_messenger.py     # LINE 操作自動化
-│   ├── logger.py             # 日誌系統
-│   ├── images/               # LINE 界面截圖
-│   ├── start.bat             # 啟動腳本
-│   └── README.md             # Windows 端應用程式設定說明
+├── windows/                        # Windows 端應用程式
+│   ├── config.py                   # 配置文件
+│   ├── main.py                     # 主應用程式入口
+│   ├── mqtt_connection.py          # MQTT 連接處理
+│   ├── message_handler.py          # 消息解析和處理
+│   ├── message_processor.py        # 消息隊列處理
+│   ├── line_messenger.py           # LINE 操作自動化
+│   ├── logger/                     # 日誌系統
+│   |   ├── discord_bot_handler.py  # Discord bot handler 實作
+│   |   ├── commands.py             # Discord slash commands 實作
+│   |   ├── setup_logger.py         # Logger 實作
+│   |   └── README.md               # Logger 設定說明
+│   ├── images/                     # LINE 界面截圖
+│   ├── start.bat                   # 啟動腳本
+│   └── README.md                   # Windows 端應用程式設定說明
 │
-└── README.md                 # 本說明文件
+└── README.md                       # 本說明文件
 ```
 
 ## 故障排除
