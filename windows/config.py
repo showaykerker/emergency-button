@@ -15,11 +15,12 @@ MQTT_RECONNECT_DELAY = 5  # seconds
 MQTT_MAX_RECONNECT_ATTEMPTS = 10
 
 ############# Button Behavior ############
-BUTTON_ACTION_BEHAVIOR = {  # "send", "cancel", "debug"
-    "single": "send",
+BUTTON_ACTION_BEHAVIOR = {  # "call", "cancel", "debug"
+    "single": "call",
     "double": "cancel",
     "long"  : "debug"
 }
+STOP_CALL_AFTER_SECONDS = 30
 
 ############ Button Alert Thresholds ############
 BATTERY_ALARM_THRESHOLD = 30    # %
@@ -50,6 +51,7 @@ CALL_ICON            = str(IMAGE_DIR / "call-icon.png")
 CALL_SELECTION       = str(IMAGE_DIR / "call-selection.png")
 START_CALL           = str(IMAGE_DIR / "start-call.png")
 CANCEL_CALL          = str(IMAGE_DIR / "cancel-call.png")
+MINI_CANCEL_PREVIEW  = str(IMAGE_DIR / "mini-cancel-preview.png")
 
 ############ Log Configs ############
 LOG_ROTATE_WHEN = "W0"             # When to trigger check, 'H', "M", "S", "D", "W0-W6", "midnight"

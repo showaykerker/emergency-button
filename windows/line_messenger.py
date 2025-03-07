@@ -5,6 +5,7 @@ import pyautogui
 import pyperclip
 import time
 import os
+import threading
 
 from logger import setup_logger
 import config
@@ -28,6 +29,7 @@ class LineMessenger:
         self.cache_lifetime = config.IMAGE_CACHE_LIFETIME  # seconds
         self.cache_timestamps = {}
         self.ensure_line_app_opened()
+        self.call_timer = None
 
     def locate_on_screen(self, target, confidence=None, click=False,
                         move_before_click=True, cache_key=None):
@@ -313,14 +315,31 @@ class LineMessenger:
             logger.error(f"\t\tError navigating to target group: {e}", exc_info=True)
             return False
 
-    def send_message(self, message="", max_retries=2, call_instead=False):
+    def cancel_call(self):
+        logger.info("Cancel Call")
+        if self.locate_on_screen(config.CANCEL_CALL, click=True):
+            self.call_timer.cancel()
+            self.call_timer = None
+            return True
+        # Try to find and click LINE icon on desktop/taskbar
+        if self.locate_on_screen(config.LINE_ICON, confidence=0.9, click=True):
+            if self.locate_on_screen(config.MINI_CANCEL_PREVIEW, confidence=0.8, click=True):
+                if self.locate_on_screen(config.CANCEL_CALL, click=True):
+                    self.call_timer.cancel()
+                    self.call_timer = None
+                    return True
+        return False
+
+    def send_message(self, action, message=""):
         """
         Send a message to the target chat group in LINE.
 
         Args:
+            action (str): Possible value: "call", "cancel", "debug"
+                - "call": send the message and start calling. The call stops after {config.STOP_CALL_AFTER_SECONDS} seconds.
+                - "cancel": cancel the call and send the message.
+                - "debug": send a debug message
             message (str): Message text to send
-            max_retries (int): Maximum number of retry attempts
-            call_instead (bool): Call the group instead of messaging
 
         Returns:
             bool: True if message sent successfully, False otherwise
@@ -330,35 +349,30 @@ class LineMessenger:
         else:
             logger.debug(f"send_message length: {len(message)}")
 
-        for attempt in range(max_retries + 1):
-            try:
 
-                # If the Cancel call icon exists and get another call_instead
-                # We will cancel the call
-                if call_instead:
-                    if self.locate_on_screen(config.CANCEL_CALL, click=True):
-                        logger.info("Cancel Call")
-                        return True
+        try:
+            # Cancel call
+            if action == "cancel":
+                if self.cancel_call():
+                    logger.info("Cancel Call")
+                else:
+                    logger.critical("Failed to cancel call")
 
-                # Ensure LINE is open
-                self.ensure_line_app_opened()
+            # Ensure LINE is open
+            self.ensure_line_app_opened()
 
-                # Navigate to target group
-                if not self.navigate_to_target_group():
-                    if attempt == max_retries:
-                        logger.error("Failed to navigate to target group")
-                        return False
-                    logger.warning(f"Retrying navigation (attempt {attempt+1}/{max_retries+1})")
-                    continue
+            # Navigate to target group
+            if not self.navigate_to_target_group():
+                logger.error("Failed to navigate to target group")
+                return False
 
-                if not call_instead:
-                    # Input and send message
-                    self.input_text(message, True)
-                    logger.info("Message sent successfully")
+            self.input_text(message, True)
+
+            if action == "call":
+                logger.info("Call")
+                if self.locate_on_screen(config.CANCEL_CALL, click=False):
+                    logger.info("Already in call, skip.")
                     return True
-
-                # Call INSTEAD
-                logger.info("CALL")
                 if not self.wait_for_image(config.CALL_ICON, click=True):
                     logger.error("Could not find call icon.")
                     return False
@@ -368,18 +382,21 @@ class LineMessenger:
                 if not self.wait_for_image(config.START_CALL, click=True):
                     logger.error("Could not find start call.")
                     return False
+                # register a timer to stop the call
+                self.call_timer = threading.Timer(
+                    config.STOP_CALL_AFTER_SECONDS,
+                    self.cancel_call)
+                self.call_timer.start()
                 return True
+            return True
 
-            except Exception as e:
-                if attempt == max_retries:
-                    logger.error(f"Failed to send message after {max_retries+1} attempts: {e}")
-                    return False
-                logger.warning(f"Error sending message (attempt {attempt+1}/{max_retries+1}): {e}")
-                # Clear cache to force fresh UI detection
-                self.ui_cache.clear()
-                self.cache_timestamps.clear()
-                logger.debug(f"Sleep for 2 second before retry")
-                time.sleep(2)  # Wait before retry
+        except Exception as e:
+            logger.error(f"Failed to send message: {e}")
+            # Clear cache to force fresh UI detection
+            self.ui_cache.clear()
+            self.cache_timestamps.clear()
+            logger.debug(f"Sleep for 2 second before retry")
+            time.sleep(2)  # Wait before retry
 
         return False
 
@@ -387,21 +404,33 @@ class LineMessenger:
 # Singleton instance for use throughout the application
 messenger = LineMessenger()
 
-def send_message(msg="", call_instead=False):
+def send_message(action, msg=""):
     """
     Public function to send a message using the LineMessenger.
 
     Args:
+        action (str): "call", "cancel", "debug"
         msg (str): Message to send
-        call_instead (bool): Call the group instead of messaging
 
     Returns:
         bool: True if successful, False otherwise
     """
-    return messenger.send_message(message=msg, call_instead=call_instead)
+    if action not in ["call", "cancel", "debug"]:
+        logger.error(f"Invalid action: {action}")
+        return False
+    return messenger.send_message(action=action, message=msg)
 
 
 if __name__ == '__main__':
     # Test the messenger
-    send_message("Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()), call_instead=False)
-    # send_message("Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()), call_instead=True)
+    # Test the messenger
+    print("Create call request")
+    send_message("call", "Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()))
+    time.sleep(config.STOP_CALL_AFTER_SECONDS)
+    print("Call should be stopped.")
+
+    target_cancel_seconds = min(3.0, config.STOP_CALL_AFTER_SECONDS / 2.0)
+    print(f"Create another call request and cancel in {target_cancel_seconds} seconds manually")
+    send_message("call", "Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()))
+    time.sleep(target_cancel_seconds)
+    send_message("cancel", "Test message\nfrom LineMessenger\n\nTimestamp: " + str(time.time()))

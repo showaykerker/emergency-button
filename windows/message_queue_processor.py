@@ -48,7 +48,7 @@ class MessageQueueProcessor(Thread):
                 
                 # Process actual message
                 self.logger.info(f"ID {identifier} | Processing message with action: {action}")
-                result = send_message(message, call_instead=action == "call")
+                result = send_message(action, message)
                 
                 if result:
                     self.logger.info(f"ID {identifier} | Message sent successfully to LINE\n")
@@ -77,7 +77,7 @@ class MessageQueueProcessor(Thread):
         
         Args:
             identifier (str): Message identifier for logging
-            action (str): Action type (send, call, debug)
+            action (str): Action type (call, cancel, debug)
             message (str): Message content
             block (bool): Whether to block if queue is full
             timeout (float): Timeout for blocking operation
